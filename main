@@ -1,0 +1,102 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+void menu();
+void fillSurvey(int,char**);
+void printSurvey(int,char **);
+void fillAnswer(char **,int **,int);
+void printAnswer(int,int **);
+void error();
+int main(){
+	int selection=0,numberq=0,i; 
+	char **survey;
+	int **answer;
+	survey=NULL;
+	printf("Welcome to our survey!\n");
+	while(selection!=4){ //Loop that repeatedly shows the menu
+	menu(); // menu function
+	scanf("%d",&selection);
+	if(!(selection>4) || (selection<1)){
+		switch(selection)
+			{
+				case 1:
+					printf("Please enter the number of questions: ");
+					scanf("%d",&numberq); // number of questions
+					fflush(stdin);
+					if(numberq>4&&numberq<1){
+						error();
+						break;
+					}
+					survey=(char**) malloc (numberq*sizeof(char*)); //dynamic array that builds number of rows for survey
+					for(i=0;i<=numberq;i++){
+						survey[i]=(char*)malloc(250*sizeof(char)); //dynamic array that builds every row for survey
+					}
+					fillSurvey(numberq,survey);
+					answer=(int**) malloc (numberq*sizeof(int*)); //dynamic array that builds number of rows for answers
+					for(i=0;i<=numberq;i++){
+						answer[i]=(int*)calloc(4,sizeof(int)); //dynamic array that builds every row for answers
+					}
+					break;
+				case 2:
+					
+					fillAnswer(survey,answer,numberq);
+					break;
+				case 3:
+					printAnswer(numberq,answer);
+					break;
+							
+			}		
+		}
+
+}
+	printf("Thanks! Bye!!"); // Closing message
+
+}
+
+void menu(){ //menu function
+	
+	printf("1.Create the Survey\n2.Participate in the Survey\n3.Display Statistics\n4.Exit\n");
+	printf("Enter your choice: ");
+	
+}
+void fillSurvey(int numberq,char **survey){ // function that fills the survey
+	int question=0;
+	while(numberq){ // loop that gets qustions as many as numberq from user.
+		printf("Please enter the %d. question: ",question+1);
+		gets(survey[question]);
+		fflush(stdin);
+		question++;
+		numberq--;
+	}
+}
+
+void printAnswer(int numberq,int **answer){ //function whose output is the statistics.
+	int i,j;
+	printf("      1  2  3  4\n");
+	for(i=0;i<numberq;i++){
+		printf("Q%d = ",i+1);
+		for(j=0;j<4;j++){
+			printf("%2d ",answer[i][j]);
+		}
+		printf("\n");
+		}
+	}
+	
+void fillAnswer(char **survey,int **answer,int numberq){ // function that fills the answer array.
+	int i,rate;
+	if(survey==NULL){ // Error message if the survey has not created.
+		printf("The survey has not been created\n");
+	}
+
+	for(i=0;i<numberq;i++){
+		printf("Please rate the following question (1-4): ");
+		printf("\nQ%d = %s\n",i+1,survey[i]);
+		scanf("%d",&rate);
+
+		fflush(stdin);
+		answer[i][rate-1]++;
+		}
+	}
+void error(){
+	printf("Error!Please enter a valid value\n");
+}
